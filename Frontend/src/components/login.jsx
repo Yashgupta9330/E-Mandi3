@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import BASE_URL from "../Server/base_url";
+import { login } from "../services/operations/authAPI";
+import { useDispatch } from "react-redux";
 
 const Login = ({ loadUser, onRouteChange }) => {
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
-
+  const dispatch = useDispatch();
   const onEmailChange = (event) => {
     setSignInEmail(event.target.value);
   };
@@ -21,25 +23,10 @@ const Login = ({ loadUser, onRouteChange }) => {
     navigate("/");
   };
   const onSubmitLogIn = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: signInEmail, password: signInPassword }),
-      });
-      const json = await response.json();
-      console.log(json);
-      if (json.success) {
-        localStorage.setItem("token", json.authtoken);
-        localStorage.setItem("role", json.role);
-        handleClick();
-      } else {
-        Swal.fire({
-          icon: "warning",
-          title: "Invalid Credentials",
-          text: "",
-        });
-      }
+    try { 
+      console.log("email :",signInEmail);
+      console.log("password :",signInPassword);
+      dispatch(login(signInEmail, signInPassword, navigate))
     } catch (error) {
       console.log(error.message);
     }

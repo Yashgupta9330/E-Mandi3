@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import "./listing.css";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
-import imgData from "../../../data/product_img_data";
 import BASE_URL from "../../../Server/base_url";
 
 const Listing = () => {
@@ -16,6 +13,7 @@ const Listing = () => {
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [pin, setPin] = useState("");
+  const [image, setImage] = useState(null);
   const States = [
     "Andhra Pradesh",
     "Arunachal Pradesh",
@@ -55,65 +53,69 @@ const Listing = () => {
 
   const navigate = useNavigate();
 
-  const onQuantityChange = (event) => {
-    setQuantity(event.target.value);
-  };
-  const onCatChange = (event) => {
-    setCat(event.target.value);
-  };
-  const onNameChange = (event) => {
-    setName(event.target.value);
-  };
-  const onDescriptionChange = (event) => {
-    setDescription(event.target.value);
-  };
-  const onPriceChange = (event) => {
-    setPrice(event.target.value);
-  };
-  const onStateChange = (event) => {
-    setState(event.target.value);
-  };
-  const onCityChange = (event) => {
-    setCity(event.target.value);
-  };
-  const onPinChange = (event) => {
-    setPin(event.target.value);
+  // Input change handlers
+  const onQuantityChange = (event) => setQuantity(event.target.value);
+  const onCatChange = (event) => setCat(event.target.value);
+  const onNameChange = (event) => setName(event.target.value);
+  const onDescriptionChange = (event) => setDescription(event.target.value);
+  const onPriceChange = (event) => setPrice(event.target.value);
+  const onStateChange = (event) => setState(event.target.value);
+  const onCityChange = (event) => setCity(event.target.value);
+  const onPinChange = (event) => setPin(event.target.value);
+
+  const onImageChange = (event) => {
+    console.log("entered image")
+    setImage(event.target.files[0]);
   };
 
-  const validateName = () => {
-    return name.length >= 3;
+  // Validation functions
+  const validateName = () => name.length >= 3;
+  const validateDescription = () => description.length >= 10;
+  const validateQuantity = () => !isNaN(quantity) && quantity >= 1 && quantity <= 100;
+  const validatePrice = () => !isNaN(price) && price >= 1 && price <= 10000;
+  const validateCity = () => city.trim() !== "";
+  const validateState = () => States.includes(state.trim());
+  const validatePin = () => /^\d{6}$/.test(pin);
+
+
+  const uploadImageToS3 = async (file) => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/add/getPresignedUrl`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+        }),
+      });
+
+      const { url } = await response.json();
+      console.log("url ",url);
+      const s3Upload = await fetch(url, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      if (s3Upload.ok) {
+        console.log("Image successfully uploaded to S3!");
+        return url.split("?")[0];
+      } else {
+        throw new Error("Failed to upload image to S3");
+      }
+    } catch (error) {
+      console.error("Error uploading image to S3", error);
+      throw error;
+    }
   };
 
-  const validateDescription = () => {
-    return description.length >= 10;
-  };
-
-  const validateQuantity = () => {
-    const parsedQuantity = parseInt(quantity);
-    return (
-      !isNaN(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= 100
-    );
-  };
-
-  const validatePrice = () => {
-    const parsedPrice = parseFloat(price);
-    return !isNaN(parsedPrice) && parsedPrice >= 1 && parsedPrice <= 10000;
-  };
-
-  const validateCity = () => {
-    return city.trim() !== "";
-  };
-
-  const validateState = () => {
-    const validStates = States;
-    return validStates.includes(state.trim());
-  };
-
-  const validatePin = () => {
-    return /^\d{6}$/.test(pin);
-  };
 
   const onList = async () => {
+    console.log("entered ")
     try {
       if (
         validateDescription() &&
@@ -121,18 +123,10 @@ const Listing = () => {
         validatePrice() &&
         validateQuantity()
       ) {
-        let image;
-
-        if (imgData[cat] && imgData[cat][name]) {
-          image = imgData[cat][name];
-          console.log(image);
-        } else if (imgData[cat] && imgData[cat].all) {
-          image = imgData[cat].all;
-          console.log(image);
-        } else {
-          console.error(`Image not found for category: ${cat}`);
+        let imageUrl = "";
+        if (image) {
+          imageUrl = await uploadImageToS3(image);
         }
-
         const response = await fetch(`${BASE_URL}/api/product/listing`, {
           method: "POST",
           headers: {
@@ -148,7 +142,7 @@ const Listing = () => {
             state: state,
             city: city,
             pin: pin,
-            image: image,
+            image: imageUrl,
           }),
         });
 
@@ -181,14 +175,11 @@ const Listing = () => {
     }
   };
 
-  function inputHandel(e) {
-    e.preventDefault();
-  }
 
   return (
     <div>
       <h1 className="list_heading container">List A New Product</h1>
-      <form className="container list_body" onClick={inputHandel}>
+      <form className="container list_body">
         <div class="form-row list_main row">
           <div class="col-sm-12 col-md-6 ">
             <label for="validationServer01">Product name</label>
@@ -212,7 +203,6 @@ const Listing = () => {
               <div class="valid-feedback">Looks good!</div>
             )}
           </div>
-
           <div class="col-sm-12 col-md-6 list_option">
             <label for="validationServer01">Category</label>
             <select
@@ -276,8 +266,18 @@ const Listing = () => {
             )}
           </div>
         </div>
+        <div className="col-sm-12 col-md-6">
+          <label htmlFor="productImage">Upload Image</label>
+          <input
+            type="file"
+            id="productImage"
+            className="form-control"
+            onChange={onImageChange}
+            accept="image/*"
+          />
+        </div>
         <div class="col-sm-12 col-md-12 ">
-          <label for="validationServer01">Product Description</label>
+          <label htmlFor="validationServer01">Product Description</label>
           <input
             type="text"
             className={
@@ -298,30 +298,13 @@ const Listing = () => {
             <div class="valid-feedback">Looks good!</div>
           )}
         </div>
-
-        <div class="form-group">
-          {/* <div class="form-check">
-            <input
-              class="form-check-input is-invalid"
-              type="checkbox"
-              value=""
-              id="invalidCheck3"
-              required
-            />
-            <label class="form-check-label" for="invalidCheck3">
-              Agree to terms and conditions
-            </label>
-            <div class="invalid-feedback">
-              You must agree before submitting.
-            </div>
-          </div> */}
-        </div>
-        <button class="btn btn-primary list_btn" onClick={onList}>
+        <button className="btn btn-primary list_btn" onClick={(event) => { event.preventDefault(); onList(); }}>
           List Product
         </button>
       </form>
     </div>
   );
-};
+}
+
 
 export default Listing;

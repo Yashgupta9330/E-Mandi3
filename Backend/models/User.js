@@ -1,3 +1,4 @@
+const { CancellationToken } = require("mongodb");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
@@ -34,6 +35,9 @@ const UserSchema = new Schema({
   pin: {
     type: Number,
     required: true,
+  },
+  token: {
+    type: String,
   },
   date: {
     type: Date,

@@ -1,130 +1,83 @@
 import React, { useState } from "react";
 import "../styles/signup.css";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import BASE_URL from "../Server/base_url";
+import axios from "axios"; // Make sure axios is imported
+import { useDispatch } from "react-redux";
+import { setSignupData } from "../slices/authSlice";
+import { toast } from "react-toastify"; // Assuming you're using react-toastify for notifications
 
-const Signup = ({ loadUser, onRouteChange }) => {
-  const [role, setRole] = useState("farmer");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [phno, setPhno] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [pin, setPin] = useState("");
+const Signup = () => {
+  const [formData, setFormData] = useState({
+    role: "farmer",
+    email: "",
+    password: "",
+    name: "",
+    phno: "",
+    state: "",
+    city: "",
+    pin: "",
+  });
 
-  const onRoleChange = (event) => {
-    setRole(event.target.value);
-  };
-  const onEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-  const onPasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-  const onNameChange = (event) => {
-    setName(event.target.value);
-  };
-  const onPhnoChange = (event) => {
-    setPhno(event.target.value);
-  };
-  const onStateChange = (event) => {
-    setState(event.target.value);
-  };
-  const onCityChange = (event) => {
-    setCity(event.target.value);
-  };
-  const onPinChange = (event) => {
-    setPin(event.target.value);
-  };
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleClick = () => {
-    navigate("/");
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
-  const onSubmitSignUp = async () => {
-    const response = await fetch(`${BASE_URL}/api/auth/createuser`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        role: role,
-        email: email,
-        password: password,
-        name: name,
-        phno: phno,
-        state: state,
-        city: city,
-        pin: pin,
-      }),
+
+  const handleErrors = (errorType) => {
+    const errorMessages = {
+      exist: "User Already Exists",
+      pin: "Give a valid PIN code",
+      phno: "Give a valid Phone Number",
+      state: "Give a valid State Name",
+      email: "Give a valid Email",
+      password: "Give a valid Password",
+      name: "Give a valid Name",
+    };
+
+    Swal.fire({
+      icon: "warning",
+      title: errorMessages[errorType] || "Invalid Credentials",
     });
-    const json = await response.json();
-    console.log(json);
-    if (json.success) {
-      localStorage.setItem("token", json.authtoken);
-      localStorage.setItem("role", json.role);
-      handleClick();
-    } else if (json === "Exist") {
-      Swal.fire({
-        icon: "warning",
-        title: "User ALready Exist",
-        text: "",
-      });
-    } else if (json.error === "pin") {
-      Swal.fire({
-        icon: "warning",
-        title: "Give a valid PIN code",
-        text: "",
-      });
-    } else if (json.error === "phno") {
-      Swal.fire({
-        icon: "warning",
-        title: "Give a valid Phone No",
-        text: "",
-      });
-    } else if (json.error === "state") {
-      Swal.fire({
-        icon: "warning",
-        title: "Give a valid state Name",
-        text: "",
-      });
-    } else if (json.error === "email") {
-      Swal.fire({
-        icon: "warning",
-        title: "Give a valid Email",
-        text: "",
-      });
-    } else if (json.error === "password") {
-      Swal.fire({
-        icon: "warning",
-        title: "Give a valid Password",
-        text: "",
-      });
-    } else if (json.error === "name") {
-      Swal.fire({
-        icon: "warning",
-        title: "Give a valid Name",
-        text: "",
-      });
-    } else {
-      Swal.fire({
-        icon: "warning",
-        title: "Invalid Credentials",
-        text: "",
-      });
+  };
+
+  const onSubmitSignUp = async () => {
+    dispatch(setSignupData(formData));
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/auth/sendotp",
+        { email: formData.email }
+      );
+      
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+
+      toast.success("OTP Sent Successfully");
+      navigate("/verify-email");
+    } catch (error) {
+      console.error("SENDOTP API ERROR:", error);
+      toast.error("Could Not Send OTP");
     }
   };
+
   return (
     <div className="container whole-body">
       <div className="form-container-signup">
-        <p className="title">SignUp</p>
+        <p className="title">Sign Up</p>
 
         <div className="input-group mb-3 option_signup">
           <select
             className="form-select"
-            id="inputGroupSelect03"
-            aria-label="Example select with button addon"
-            onChange={onRoleChange}
+            name="role"
+            value={formData.role}
+            onChange={handleInputChange}
           >
             <option value="farmer">Farmer</option>
             <option value="buyer">Buyer</option>
@@ -132,86 +85,88 @@ const Signup = ({ loadUser, onRouteChange }) => {
         </div>
 
         <div className="input-group">
-          <label for="username">Name</label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
-            name="username"
-            id="username"
-            placeholder=""
-            onChange={onNameChange}
-          />
-        </div>
-        <div className="input-group">
-          <label for="username">Phone Number</label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            placeholder=""
-            onChange={onPhnoChange}
+            name="name"
+            placeholder="Enter your name"
+            value={formData.name}
+            onChange={handleInputChange}
           />
         </div>
 
         <div className="input-group">
-          <label for="email">Email</label>
+          <label htmlFor="phno">Phone Number</label>
           <input
             type="text"
-            name="username"
-            id="username"
-            placeholder=""
-            onChange={onEmailChange}
+            name="phno"
+            placeholder="Enter your phone number"
+            value={formData.phno}
+            onChange={handleInputChange}
           />
         </div>
+
         <div className="input-group">
-          <label for="password">Password</label>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             name="password"
-            id="password"
-            placeholder=""
-            onChange={onPasswordChange}
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleInputChange}
           />
         </div>
+
         <div className="input-group">
-          <label for="username">State</label>
+          <label htmlFor="state">State</label>
           <input
             type="text"
-            name="username"
-            id="username"
-            placeholder=""
-            onChange={onStateChange}
+            name="state"
+            placeholder="Enter your state"
+            value={formData.state}
+            onChange={handleInputChange}
           />
         </div>
+
         <div className="input-group">
-          <label for="username">City</label>
+          <label htmlFor="city">City</label>
           <input
             type="text"
-            name="username"
-            id="username"
-            placeholder=""
-            onChange={onCityChange}
+            name="city"
+            placeholder="Enter your city"
+            value={formData.city}
+            onChange={handleInputChange}
           />
         </div>
+
         <div className="input-group">
-          <label for="username">PIN code</label>
+          <label htmlFor="pin">PIN Code</label>
           <input
             type="text"
-            name="username"
-            id="username"
-            placeholder=""
-            onChange={onPinChange}
+            name="pin"
+            placeholder="Enter your PIN code"
+            value={formData.pin}
+            onChange={handleInputChange}
           />
         </div>
 
         <button className="sign" onClick={onSubmitSignUp}>
-          SignUp
+          Sign Up
         </button>
+
         <p className="signup">
-          Already have an account?
-          <Link rel="noopener noreferrer" to="/login" class="">
-            {" "}
-            Log in
-          </Link>
+          Already have an account? <Link to="/login">Log in</Link>
         </p>
       </div>
     </div>

@@ -11,13 +11,19 @@ const About = () => {
         <div className="about-card">
           <div className="about-card-img sunit"></div>
           <p className="about-card-text">
-            Name: Sunit Pal <br /> Enroll No: 211B384
+            Name: Vishal Raj <br /> Enroll No: 12022002019040
+          </p>
+        </div>
+        <div className="about-card">
+          <div className="about-card-img sunit"></div>
+          <p className="about-card-text">
+            Name: Yash Gupta <br /> Enroll No: 12022002019013
           </p>
         </div>
         <div className="about-description">
           <h3 className="about-subheader">Project Developer</h3>
           <p>
-            I am a student at Jaypee University of Engineering and Technology,
+            I am a student at Institute of Engineering and Management,
             Guna, and I have developed and maintained the E-Mandi website.
           </p>
           <p>

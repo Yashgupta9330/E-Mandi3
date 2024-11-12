@@ -28,11 +28,13 @@ const Home = () => {
     // Fetch data from your backend API
     const fetchData = async () => {
       try {
+        const token=localStorage.getItem("token");
+        console.log("token ",token)
         const response = await fetch(`${BASE_URL}/api/product/view`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "auth-token": localStorage.getItem("token"),
+            "auth-token": token,
           },
         });
         const json = await response.json();

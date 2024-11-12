@@ -20,12 +20,11 @@ import "./App.css";
 
 import {
   BrowserRouter as Router,
-  // Switch,
   Route,
-  // Link,
   Routes,
 } from "react-router-dom";
 import { createContext } from "react";
+import VerifyEmail from "./components/verifyemail.jsx";
 
 const MyContext = createContext();
 
@@ -85,7 +84,7 @@ function App() {
           path="/farmerProfile"
           element={
             <>
-              {/* <Navbar /> */}
+               {/* <Navbar /> */}
               <FarmerDashboard />
             </>
           }
@@ -115,6 +114,12 @@ function App() {
               <Navbar2 />
               <Checkout />
             </>
+          }
+        />
+        <Route 
+          path="/verify-email"
+          element={
+            <VerifyEmail/>
           }
         />
         <Route

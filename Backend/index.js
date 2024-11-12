@@ -9,9 +9,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-//Port No.
+
 const port = process.env.PORT;
-//Routes
+
 
 //Authentication
 app.use("/api/auth", require("./routes/auth"));
@@ -19,6 +19,8 @@ app.use("/api/auth", require("./routes/auth"));
 // Farmer
 //Listing
 app.use("/api/product", require("./routes/Farmer/listing.js"));
+
+app.use("/api/add",require("./routes/store/image.js"))
 
 //Manage Product
 app.use("/api/inventory", require("./routes/Farmer/inventory.js"));
