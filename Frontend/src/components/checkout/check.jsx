@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./check.css";
 import BASE_URL from "../../Server/base_url";
-
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Checkout = () => {
   const location = useLocation();
@@ -23,109 +23,43 @@ const Checkout = () => {
 
   const handleNewAddressClick = () => {
     setActiveButton("new");
-    // Call your onNewAddress function here
-    // Example: onNewAddress();
   };
 
   const handleDefaultAddressClick = () => {
     setActiveButton("default");
-    // Call your onDefaultAddress function here
-    // Example: onDefaultAddress();
   };
 
   const States = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli and Daman and Diu",
-    "Delhi",
-    "Lakshadweep",
-    "Puducherry",
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
+    "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
+    "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
+    "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+    "Uttar Pradesh", "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", 
+    "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Lakshadweep", 
+    "Puducherry"
   ];
 
-  const onNameChange = (event) => {
-    setName(event.target.value);
-  };
-  const onPHnoChange = (event) => {
-    setPHno(event.target.value);
-  };
+  const onNameChange = (event) => setName(event.target.value);
+  const onPHnoChange = (event) => setPHno(event.target.value);
+  const onStateChange = (event) => setState(event.target.value);
+  const onCityChange = (event) => setCity(event.target.value);
+  const onPinChange = (event) => setPin(event.target.value);
 
-  const onStateChange = (event) => {
-    setState(event.target.value);
-  };
-  const onCityChange = (event) => {
-    setCity(event.target.value);
-  };
-  const onPinChange = (event) => {
-    setPin(event.target.value);
-  };
-
-  const validateName = () => {
-    return name.length >= 3;
-  };
-
-  const validatePHno = () => {
-    const pattern = /^\d{10}$/;
-
-    // Test the number against the pattern
-    return pattern.test(PHno);
-  };
-
-  const validateCity = () => {
-    return city.trim() !== "";
-  };
-
-  const validateState = () => {
-    const validStates = States;
-    return validStates.includes(state.trim());
-  };
-
-  const validatePin = () => {
-    return /^\d{6}$/.test(pin);
-  };
+  const validateName = () => name.length >= 3;
+  const validatePHno = () => /^\d{10}$/.test(PHno);
+  const validateCity = () => city.trim() !== "";
+  const validateState = () => States.includes(state.trim());
+  const validatePin = () => /^\d{6}$/.test(pin);
 
   function inputHandel(e) {
     e.preventDefault();
   }
-  const goCart = () => {
-    navigate("/cart");
-  };
+
+  const goCart = () => navigate("/cart");
 
   const onContinue = () => {
     if (
-      validateCity() &&
-      validateName() &&
-      validatePin &&
-      validateState() &&
-      validatePHno() &&
-      activeButton === "new"
+      validateCity() && validateName() && validatePin() && validateState() && validatePHno() && activeButton === "new"
     ) {
       placeOrder();
     } else if (activeButton === "default") {
@@ -156,37 +90,51 @@ const Checkout = () => {
           shipping: shipping,
         });
       });
-      const response = await fetch(`${BASE_URL}/api/order/place`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          address: activeButton,
-          name: name,
-          PHno: PHno,
-          state: state,
-          city: city,
-          pin: pin,
-          price: data.price,
-          cat: data.cat,
-          buyer_id: data.buyer_id,
-          buyerName: data.buyerName,
-          date: data.date,
-          products: products,
-        }),
+      
+
+      const details={
+        address: activeButton,
+        name: name,
+        PHno: PHno,
+        state: state,
+        city: city,
+        pin: pin,
+        price: data.price,
+        cat: data.cat,
+        buyer_id: data.buyer_id,
+        buyerName: data.buyerName,
+        date: data.date,
+        products: products
+      }
+
+      localStorage.setItem('details', JSON.stringify(details));
+      const response = await axios.post(`${BASE_URL}/api/pay/create-payment-intent`, {
+        address: activeButton,
+        name: name,
+        PHno: PHno,
+        state: state,
+        city: city,
+        pin: pin,
+        price: data.price,
+        cat: data.cat,
+        buyer_id: data.buyer_id,
+        buyerName: data.buyerName,
+        date: data.date,
+        products: products,
       });
-      const json = await response.json();
-      console.log(json);
-      if (json.success) {
+  
+      console.log("Response from server:", response);
+  
+      if (response.status === 200) {
         Swal.fire({
           icon: "success",
-          title: "Order Placed",
+          title: "redirecting to checkout page",
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate("/");
+        
+        // Corrected redirection syntax
+        window.location.href = response.data.url;
       } else {
         Swal.fire({
           icon: "warning",
@@ -196,9 +144,14 @@ const Checkout = () => {
       }
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Order Failed",
+        text: "There was an error placing your order. Please try again later.",
+      });
     }
   };
-
+  
   return (
     <section className="cartSection mb-5 checkoutPage">
       <div className="container">
@@ -208,16 +161,12 @@ const Checkout = () => {
               <div className="address_body">
                 <h1 className="address_heading container">Delivery Address</h1>
                 <form className="container list_body" onClick={inputHandel}>
-                  <div class="form-row list_main row">
-                    <div class="col-sm-12 col-md-6 ">
-                      <label for="validationServer01">Name</label>
+                  <div className="form-row list_main row">
+                    <div className="col-sm-12 col-md-6">
+                      <label htmlFor="validationServer01">Name</label>
                       <input
                         type="text"
-                        className={
-                          validateName()
-                            ? "form-control is-valid"
-                            : "form-control is-invalid"
-                        }
+                        className={validateName() ? "form-control is-valid" : "form-control is-invalid"}
                         id="validationServer01"
                         placeholder="Name"
                         required
@@ -225,15 +174,11 @@ const Checkout = () => {
                       />
                     </div>
 
-                    <div class="col-sm-12 col-md-6 ">
-                      <label for="validationServer02">Phone No.</label>
+                    <div className="col-sm-12 col-md-6">
+                      <label htmlFor="validationServer02">Phone No.</label>
                       <input
                         type="text"
-                        className={
-                          validatePHno()
-                            ? "form-control is-valid"
-                            : "form-control is-invalid"
-                        }
+                        className={validatePHno() ? "form-control is-valid" : "form-control is-invalid"}
                         id="validationServer02"
                         placeholder="10-Digit"
                         onChange={onPHnoChange}
@@ -242,46 +187,38 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <div class="form-row row">
-                    <div class="col-sm-12 col-md-6 ">
-                      <label for="validationServer03">City</label>
+                  <div className="form-row row">
+                    <div className="col-sm-12">
+                      <label htmlFor="validationServer03">City</label>
                       <input
                         type="text"
-                        className={
-                          validateCity()
-                            ? "form-control is-valid"
-                            : "form-control is-invalid"
-                        }
+                        className={validateCity() ? "form-control is-valid" : "form-control is-invalid"}
                         id="validationServer03"
                         placeholder="City"
                         required
                         onChange={onCityChange}
                       />
                     </div>
-                    <div class="col-sm-12 col-md-6 ">
-                      <label for="validationServer04">State</label>
+                  </div>
+
+                  <div className="form-row row">
+                    <div className="col-sm-12 col-md-6">
+                      <label htmlFor="validationServer04">State</label>
                       <input
                         type="text"
-                        className={
-                          validateState()
-                            ? "form-control is-valid"
-                            : "form-control is-invalid"
-                        }
+                        className={validateState() ? "form-control is-valid" : "form-control is-invalid"}
                         id="validationServer04"
                         placeholder="State"
                         required
                         onChange={onStateChange}
                       />
                     </div>
-                    <div class="col-sm-12 col-md-6 ">
-                      <label for="validationServer05">Pin Code</label>
+
+                    <div className="col-sm-12 col-md-6">
+                      <label htmlFor="validationServer05">Pin Code</label>
                       <input
                         type="text"
-                        className={
-                          validatePin()
-                            ? "form-control is-valid"
-                            : "form-control is-invalid"
-                        }
+                        className={validatePin() ? "form-control is-valid" : "form-control is-invalid"}
                         id="validationServer05"
                         placeholder="Pin Code"
                         required
@@ -289,19 +226,18 @@ const Checkout = () => {
                       />
                     </div>
                   </div>
+
                   <div className="address_btn">
                     <button
-                      className={`btn btn-outline-success address_buttons ${
-                        activeButton === "new" ? "active" : ""
-                      }`}
+                      type="button"
+                      className={`btn btn-outline-success address_buttons ${activeButton === "new" ? "active" : ""}`}
                       onClick={handleNewAddressClick}
                     >
                       Use New Address
                     </button>
                     <button
-                      className={`btn btn-outline-success address_buttons ${
-                        activeButton === "default" ? "active" : ""
-                      }`}
+                      type="button"
+                      className={`btn btn-outline-success address_buttons ${activeButton === "default" ? "active" : ""}`}
                       onClick={handleDefaultAddressClick}
                     >
                       Use Default Address
@@ -312,7 +248,7 @@ const Checkout = () => {
             </div>
 
             <div className="col-md-4 cartRightBox">
-              <div className="container proceed-body  p-4 ">
+              <div className="container proceed-body p-4">
                 <div className="d-flex align-items-center mb-4">
                   <h5 className="mb-0 black_color">Subtotal</h5>
                   <h3 className="ml-auto mb-0 font-weight-bold black_color">
@@ -323,54 +259,36 @@ const Checkout = () => {
                 <div className="d-flex align-items-center mb-4">
                   <h5 className="mb-0 black_color">Shipping Fee</h5>
                   <h3 className="ml-auto mb-0 font-weight-bold black_color">
-                    <span className="black_color">
-                      {!shipping ? "FREE" : 10}
-                    </span>
-                  </h3>
-                </div>
-                <div className="d-flex align-items-center mb-4">
-                  <h5 className="mb-0 black_color">Discount</h5>
-                  <h3 className="ml-auto mb-0 font-weight-bold black_color">
-                    <span className="black_color">0</span>
-                  </h3>
-                </div>
-                <div className="d-flex align-items-center mb-4">
-                  <h5 className="mb-0 black_color">Total Item</h5>
-                  <h3 className="ml-auto mb-0 font-weight-bold black_color">
-                    <span className="black_color"> {data.length}</span>
+                    <span className="black_color">{!shipping ? "FREE" : 5}</span>
                   </h3>
                 </div>
 
-                {/* <div className="d-flex align-items-center mb-4">
-                  <h5 className="mb-0 black_color">Estimate for</h5>
-                  <h3 className="ml-auto mb-0 font-weight-bold">INDIA</h3>
-                </div> */}
-
                 <div className="d-flex align-items-center mb-4">
-                  <h5 className="mb-0 black_color">Total Amount</h5>
-                  <h3 className="ml-auto mb-0 font-weight-bold">
-                    <span className="text-g black_color">
-                      {!shipping ? totalPrice : totalPrice + data.length * 5}
-                    </span>
+                  <h5 className="mb-0 black_color">Total</h5>
+                  <h3 className="ml-auto mb-0 font-weight-bold black_color">
+                    <span className="black_color">{shipping ? totalPrice + 5 : totalPrice}</span>
                   </h3>
                 </div>
-                <br />
                 <Button
-                  className="btn-g btn-lg proceed-btn"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className="confirm_button"
                   onClick={onContinue}
                 >
-                  Place Order
+                  Continue
+                </Button>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="secondary"
+                  className="confirm_button mt-3"
+                  onClick={goCart}
+                >
+                  Go Back
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="row container go_cart">
-            <Button
-              className="btn-g btn-lg proceed-btn go_to_cart_btn"
-              onClick={goCart}
-            >
-              <i class="fa-solid fa-arrow-left"></i> &nbsp; Cart
-            </Button>
           </div>
         </form>
       </div>

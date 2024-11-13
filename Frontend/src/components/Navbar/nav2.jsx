@@ -224,6 +224,20 @@ const Navigation = (props) => {
                 </Link>
                 <Link
                   class="nav-link  text-decoration-none px-3 py-1 rounded-4 nav_txt_hov"
+                  to="/list"
+                >
+                  <i class="fa-solid fa-circle-info"></i>
+                  Products
+                </Link>
+                <Link
+                  class="nav-link  text-decoration-none px-3 py-1 rounded-4 nav_txt_hov"
+                  to="/bestseller"
+                >
+                  <i class="fa-solid fa-circle-info"></i>
+                  BestSeller
+                </Link>
+                <Link
+                  class="nav-link  text-decoration-none px-3 py-1 rounded-4 nav_txt_hov"
                   to="/contact"
                 >
                   <i class="fa-solid fa-circle-info"></i>

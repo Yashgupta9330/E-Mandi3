@@ -29,19 +29,14 @@ const Product = (props) => {
 
   return (
     <div className="w-[200px] h-[300px]">
-      {/* {data.tag !== null && data.tag !== undefined && (
-        <span className={`badge ${data.tag}`}>{data.tag}</span>
-      )} */}
-
       {data !== undefined && (
         <>
           <div onClick={onDetail} className="cursor">
             <div className="imgWrapper">
               <div className="p-4 wrapper mb-3">
                 <img
-                   width={200}
-                   height={100}
                   src={data.image}
+                  alt={data.name}
                   className="rounded-lg"
                 />
               </div>
@@ -66,8 +61,7 @@ const Product = (props) => {
               <div className="d-flex align-items-center w-100">
                 <span className="price text-g font-weight-bold">
                   Rs {data.price}/KG
-                </span>{" "}
-                {/* <span className="oldPrice ml-auto">{data.quantity}KG</span> */}
+                </span>
               </div>
             </div>
             {role == "farmer" ? (
@@ -76,16 +70,15 @@ const Product = (props) => {
               <Button
                 className="w-100 transition mt-3"
                 onClick={onDetail}
-                //   onClick={() => addToCart(productData)}
               >
-                <i class="fa-solid fa-eye"></i>
-               {/*isAdded === true ? "Added" : "Add" */} 
+                <i className="fa-solid fa-eye"></i>
               </Button>
             )}
           </div>
         </>
       )}
     </div>
+
   );
 };
 

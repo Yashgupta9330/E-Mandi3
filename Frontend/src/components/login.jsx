@@ -69,7 +69,7 @@ const Login = ({ loadUser, onRouteChange }) => {
 
           <p className="signup">
             Don't have an account?
-            <Link rel="noopener noreferrer" to="/signup" class="">
+            <Link rel="noopener noreferrer" to="/signup" className="text-black">
               {" "}
               Sign up
             </Link>

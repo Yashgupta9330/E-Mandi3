@@ -34,6 +34,9 @@ app.use("/api/order_history", require("./routes/Farmer/order_history.js"));
 // Feedback
 app.use("/api/feedback", require("./routes/Farmer/feedback.js"));
 
+
+
+
 // Buyer
 //View
 app.use("/api/product", require("./routes/Buyer/View.js"));
@@ -50,12 +53,13 @@ app.use("/api/myOrder", require("./routes/Buyer/MyOrder.js"));
 //OrderHistory
 app.use("/api/history", require("./routes/Buyer/OrderHistory.js"));
 
+app.use("/api/list", require("./routes/Buyer/TotalProduct.js"));
 //ADD Review
 app.use("/api/review", require("./routes/Buyer/AddReview.js"));
 
 // Show Reviews
 app.use("/api/review", require("./routes/Buyer/Review.js"));
-
+ app.use("/api/pay" ,require("./routes/payments/pay.js"))
 // Product
 // ProductDetails
 app.use("/api/product", require("./routes/Product/Details.js"));

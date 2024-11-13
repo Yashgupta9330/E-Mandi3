@@ -93,7 +93,7 @@ const Navigation = (props) => {
               </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body className="off-canvas-body">
-              <Nav className="justify-content-center flex-grow-1 pe-3">
+              <Nav className="justify-content-center flex-grow-1">
                 <Link
                   class="nav-link  text-decoration-none px-3 py-1 rounded-4 nav_txt_hov"
                   aria-current="page"
@@ -108,6 +108,13 @@ const Navigation = (props) => {
                 >
                   <i class="fa-solid fa-circle-info"></i>
                   About
+                </Link>
+                <Link
+                  class="nav-link  text-decoration-none px-3 py-1 rounded-4 nav_txt_hov"
+                  to="/list"
+                >
+                  <i class="fa-solid fa-circle-info"></i>
+                  Products
                 </Link>
                 <Link
                   class="nav-link  text-decoration-none px-3 py-1 rounded-4 nav_txt_hov"
@@ -150,14 +157,14 @@ const Navigation = (props) => {
                     {/* Profile */}
                     {role == "farmer" ? (
                       <Link
-                        class=" text-decoration-none px-3 py-1 rounded-4 nav_txt nav_txt_hov profile_nav"
+                        class=" text-decoration-none px-2 py-2 rounded-4 nav_txt nav_txt_hov profile_nav"
                         to="/farmerProfile"
                       >
                         <FaUserCircle />
                       </Link>
                     ) : (
                       <Link
-                        class=" text-decoration-none px-3 py-1 rounded-4 nav_txt nav_txt_hov profile_nav"
+                        class=" text-decoration-none px-2 py-2 rounded-4 nav_txt nav_txt_hov profile_nav"
                         to="/buyerProfile"
                       >
                         <FaUserCircle />

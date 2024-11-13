@@ -1,21 +1,18 @@
 import React from "react";
 import Card from "./product_card.jsx";
+import CardProduct from "./CardProduct.jsx";
 
-function product(props) {
+function Product(props) {
   const data = props.data;
-  const cards = [];
-  for (let i = 0; i < data.length; i++) {
-    cards.push(
-      <div key={i} className="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-        <Card data={data[i]} />
-      </div>
-    );
-  }
+  
   return (
-    <div className="container my-4">
-      <div className="product row">{cards}</div>
+    <div className="my-4 mx-12 flex w-full gap-4">
+      {data.slice(0,4).map((product, index) => {
+        return <CardProduct key={index} product={product} />; 
+      })}
     </div>
   );
 }
 
-export default product;
+export default Product;
+

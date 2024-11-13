@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "../styles/home.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Hero from "./Hero/hero";
 import Product from "./product/product";
 import Top from "./TopBar/top";
-import Nav from "./Navbar/nav";
+import Navbar2 from "./Navbar/nav2";
 import BASE_URL from "../Server/base_url";
-
+import { FaBullhorn, FaDollarSign, FaLock, FaUserFriends } from "react-icons/fa";
+import { Card, CardContent } from "./ui/card";
 const Home = () => {
   const navigate = useNavigate();
   let token = localStorage.getItem("token");
-
+  const [searchData,setSearchData]=useState('');
   const [top, setTop] = useState([]);
   const [vegetable, setVegetable] = useState([]);
   const [fruit, setFruit] = useState([]);
@@ -76,12 +77,12 @@ const Home = () => {
     fetchData();
   }, [token]); // Call useEffect when token changes
 
-  const [searchData, setSearchData] = useState([]);
+
 
   return (
     <>
       {/* <Navbar /> */}
-      <Nav setSearchData={setSearchData} />
+      <Navbar2 />
       {searchData.length !== 0 && (
         <>
           <Top name={"Search Items"} />
@@ -89,6 +90,26 @@ const Home = () => {
         </>
       )}
       <Hero />
+
+      <section id="features" className="my-16">
+          <h2 className="text-3xl font-bold text-center mb-8 text-green-600">Why Choose E-mandi?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+            {[
+              { icon: FaBullhorn, title: "Direct Market Access", description: "Sell directly to buyers without intermediaries." },
+              { icon: FaDollarSign, title: "Fair Pricing", description: "Transparent pricing based on current market rates." },
+              { icon: FaLock, title: "Secure Transactions", description: "Safe and easy payments for both buyers and sellers." },
+              { icon: FaUserFriends, title: "User-Friendly Platform", description: "Simple steps to register, list, and trade." },
+            ].map((feature, index) => (
+              <Card key={index}>
+                <CardContent className="flex flex-col items-center text-center p-6">
+                  <feature.icon className="text-4xl mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
 
       {top.length > 0 && (
         <>
@@ -132,6 +153,12 @@ const Home = () => {
           <Product data={masala} />
         </>
       )}
+       <section className="cta-section">
+        <div className="cta-content text-center">
+          <h2 className="text-black">Join Thousands of Farmers Growing Their Business on E-mandi</h2>
+          <Link href="/register" className="cta-button">Register Now</Link>
+        </div>
+      </section>
     </>
   );
 };

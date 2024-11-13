@@ -18,7 +18,8 @@ const Signup = () => {
     city: "",
     pin: "",
   });
-
+  
+  const [loading, setLoading] = useState(false); // Add loading state
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -49,6 +50,9 @@ const Signup = () => {
 
   const onSubmitSignUp = async () => {
     dispatch(setSignupData(formData));
+    
+    setLoading(true); // Set loading to true when request starts
+    
     try {
       const response = await axios.post(
         "http://localhost:4000/api/auth/sendotp",
@@ -64,12 +68,14 @@ const Signup = () => {
     } catch (error) {
       console.error("SENDOTP API ERROR:", error);
       toast.error("Could Not Send OTP");
+    } finally {
+      setLoading(false); // Set loading to false once the request completes
     }
   };
 
   return (
     <div className="container whole-body">
-      <div className="form-container-signup">
+      <div className="form-container-signup mb-8">
         <p className="title">Sign Up</p>
 
         <div className="input-group mb-3 option_signup">
@@ -161,8 +167,8 @@ const Signup = () => {
           />
         </div>
 
-        <button className="sign" onClick={onSubmitSignUp}>
-          Sign Up
+        <button className="sign" onClick={onSubmitSignUp} disabled={loading}>
+          {loading ? "Signing Up..." : "Sign Up"} {/* Show loading text when loading */}
         </button>
 
         <p className="signup">

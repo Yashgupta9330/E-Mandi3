@@ -39,7 +39,16 @@
 }
 
 .sunit {
-  background-image: url("../images/SP.jpeg");
+  background-image: url("../images/vishal.jpg");
+  background-size: cover;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.sunit2 {
+  background-image: url("../images/yash.jpg");
   background-size: cover;
   width: 200px;
   height: 200px;

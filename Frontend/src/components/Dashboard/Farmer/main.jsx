@@ -11,7 +11,7 @@ import Feedback from "./feedback";
 import Setting from "./setting";
 import Dashboard from "./dashboard";
 import { FaHistory } from "react-icons/fa";
-
+import Analytics from "./Analytics"
 import {
   BsCart3,
   BsGrid1X2Fill,
@@ -122,6 +122,12 @@ function Main() {
           </li>
           <li
             className="sidebar-list-item"
+            onClick={() => handleOptionClick("analytics")}
+          >
+            <BsFillArchiveFill className="icon" /> Analytics
+          </li>
+          <li
+            className="sidebar-list-item"
             onClick={() => handleOptionClick("feedback")}
           >
             <BsMenuButtonWideFill className="icon" /> Feedback
@@ -150,6 +156,8 @@ function Main() {
         <Feedback />
       ) : option === "dashboard" ? (
         <Dashboard />
+      ):option === "analytics" ? (
+        <Analytics />
       ) : option === "history" ? (
         <History />
       ) : (

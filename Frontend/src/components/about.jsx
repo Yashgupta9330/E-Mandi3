@@ -15,7 +15,7 @@ const About = () => {
           </p>
         </div>
         <div className="about-card">
-          <div className="about-card-img sunit"></div>
+          <div className="about-card-img sunit2"></div>
           <p className="about-card-text">
             Name: Yash Gupta <br /> Enroll No: 12022002019013
           </p>

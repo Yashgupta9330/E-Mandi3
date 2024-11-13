@@ -61,16 +61,21 @@
 }
 
 .productThumb .imgWrapper {
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  position: relative;
+  width: 200px; /* Fixed width */
+  height: 150px; /* Fixed height */
 }
 .productThumb .imgWrapper .wrapper {
   height: auto;
   overflow: hidden;
 }
 .productThumb .imgWrapper img {
-  transition: all 0.3s ease-in-out;
+  object-fit: cover; /* Ensures the image covers the container while maintaining aspect ratio */
+  width: 100%;      /* Makes sure the image takes up the full width of the container */
+  height: 100%;     
 }
 
 .productThumb .imgWrapper .overlay {

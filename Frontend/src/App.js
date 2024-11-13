@@ -26,11 +26,18 @@ import { createContext } from "react";
 import VerifyEmail from "./components/verifyemail.jsx";
 import Better from "./components/Home/Home.jsx";
 import Footer from "./components/Home/Footer.jsx";
+import Productslist from "./components/list/productslist.jsx";
+import BestSellers from "./components/product/BestSeller.jsx";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import SuccessPage from "./components/checkout/success.jsx";
 
 const MyContext = createContext();
+const stripePromise = loadStripe("pk_test_51PSJcmSF49XkwZQgcmYSC18cuvNqTCWksKEubird5EXq2GlvSpaB6CCKXhCGsG0xk5uBf3IbBlnyQnOrr49EC9hO00QbVDEov4");
 
 function App() {
   return (
+    <Elements stripe={stripePromise}>
     <Router>
       <Routes>
         <Route
@@ -39,6 +46,25 @@ function App() {
             <>
               <Home />
               <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/bestseller"
+          element={
+            <>
+              <Navbar2/>
+              <BestSellers />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/success"
+          element={
+            <>
+              <SuccessPage />
             </>
           }
         />
@@ -52,13 +78,21 @@ function App() {
             </>
           }
         />
+         <Route
+          path="/list"
+          element={
+            <>
+              <Navbar2 />
+              <Productslist/>
+            </>
+          }
+        />
         <Route
           path="/login"
           element={
             <>
               <Navbar2 />
               <Login />
-              <Footer />
             </>
           }
         />
@@ -160,6 +194,7 @@ function App() {
         />
       </Routes>
     </Router>
+    </Elements>
   );
 }
 

@@ -5,7 +5,7 @@ const User = require("../../models/User.js");
 const Buyer = require("../../models/Buyer.js");
 const fetchUser = require("../../middleware/fetchUserr.js");
 
-// ROUTE 1: Add items to the cart"
+// ROUTE 1: Add items to the cart
 Router.post("/add", fetchUser, async (req, res) => {
   try {
     const newItem = {
@@ -30,7 +30,7 @@ Router.post("/add", fetchUser, async (req, res) => {
     res.status(201).json({
       success: true,
       response: response,
-      message: "add item successfully",
+      message: "Add item successfully",
     });
   } catch (error) {
     console.error(error.message);
@@ -38,11 +38,10 @@ Router.post("/add", fetchUser, async (req, res) => {
   }
 });
 
-// ROUTE 2: Get items from the cart"
+// ROUTE 2: Get items from the cart
 Router.get("/checkout", fetchUser, async (req, res) => {
   try {
     const response = await Buyer.findById(req.user.id).select("cart");
-
     res.send(response.cart);
   } catch (error) {
     console.error(error.message);
@@ -50,7 +49,7 @@ Router.get("/checkout", fetchUser, async (req, res) => {
   }
 });
 
-// ROUTE 3: Get items from the cart"
+// ROUTE 3: Delete item from the cart
 Router.delete("/deleteOne/:index", fetchUser, async (req, res) => {
   try {
     const buyer = await Buyer.findById(req.user.id);
@@ -78,15 +77,49 @@ Router.delete("/deleteOne/:index", fetchUser, async (req, res) => {
   }
 });
 
-//Route 4: Empty the cart
+// ROUTE 4: Empty the cart
 Router.delete("/emptyCart", fetchUser, async (req, res) => {
   try {
     const buyer = await Buyer.findById(req.user.id);
-    const cart = [];
-    buyer.cart = cart; // Set the cart array to an empty array
+    buyer.cart = []; // Set the cart array to an empty array
     await buyer.save(); // Save the changes
+    res.json(buyer.cart);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal server error");
+  }
+});
 
-    res.json(cart);
+// ROUTE 5: Update item quantity in the cart
+Router.put("/updateQuantity", fetchUser, async (req, res) => {
+  try {
+    const { productId, newQuantity } = req.body;
+
+    if (newQuantity <= 0) {
+      return res.status(400).json({ message: "Quantity must be greater than zero" });
+    }
+
+    const buyer = await Buyer.findById(req.user.id);
+    const cart = buyer.cart;
+
+    // Find the item with the specified productId in the cart
+    const itemIndex = cart.findIndex(item => item.productId.toString() === productId);
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: "Product not found in the cart" });
+    }
+
+    // Update the quantity of the found item
+    cart[itemIndex].quantity = newQuantity;
+
+    // Save the updated cart
+    await buyer.save();
+
+    res.json({
+      success: true,
+      message: "Quantity updated successfully",
+      updatedCart: buyer.cart,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal server error");
@@ -94,3 +127,4 @@ Router.delete("/emptyCart", fetchUser, async (req, res) => {
 });
 
 module.exports = Router;
+

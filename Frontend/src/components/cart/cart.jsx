@@ -97,7 +97,55 @@ const Cart = () => {
       console.log(error);
     }
   };
-
+  
+  const updateQuantity = async (index,item,action) => {
+    try {
+      console.log("item",item)
+      const newQuantity = action === "increase" ? item.quantity + 1 : item.quantity - 1;
+  
+      // Don't allow quantity to go below 1
+      if (newQuantity < 1) return;
+  
+      // Send request to update the quantity
+      const response = await fetch(`${BASE_URL}/api/cart/updateQuantity`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({ newQuantity, productId: item.productId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update cart");
+      }
+  
+      const updatedData = await response.json();
+  
+      // Check if updatedData is structured as expected
+      if (updatedData.success) {
+        // Update the cart data with the updated cart
+        setData(updatedData.updatedCart);
+  
+        // Recalculate the total price based on the updated quantities
+        let total = updatedData.updatedCart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  
+        setTotalPrice(total);
+  
+        // Update shipping logic
+        if (total >= 100 && updatedData.updatedCart.length > 0) {
+          setShipping(false);
+        } else if (updatedData.updatedCart.length === 0) {
+          setShipping(false);
+        } else {
+          setShipping(true);
+        }
+      }
+    } catch (error) {
+      console.log("Error updating quantity:", error);
+    }
+  };
+  
   //Empties the cart
   const onClearCart = () => {
     if (data.length > 0) {
@@ -216,9 +264,8 @@ const Cart = () => {
                                   </div>
 
                                   <div className="info pl-4">
-                                    <Link to={`/product/${item.id}`}>
                                       <h4>{item.productName}</h4>
-                                    </Link>
+
 
                                     <p>{item.farmerName}</p>
                                   </div>
@@ -230,15 +277,21 @@ const Cart = () => {
                               </td>
 
                               <td>
-                                {item.quantity < 1 ? (
-                                  <h4 className="weight_in_cart">
-                                    {item.quantity * 1000}GM
-                                  </h4>
-                                ) : (
-                                  <h4 className="weight_in_cart">
-                                    {item.quantity}KG
-                                  </h4>
-                                )}
+                                <div className="quantity-controls">
+                                  <button
+                                    onClick={() => updateQuantity(index,item,"decrease")}
+                                    className="decrease-btn text-2xl mx-2"
+                                  >
+                                    -
+                                  </button>
+                                  <span>{item.quantity}</span>
+                                  <button
+                                    onClick={() => updateQuantity(index,item,"increase")}
+                                    className="increase-btn text-2xl mx-2"
+                                  >
+                                    +
+                                  </button>
+                                </div>
                               </td>
 
                               <td align="center">
