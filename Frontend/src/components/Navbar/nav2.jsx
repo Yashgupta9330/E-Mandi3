@@ -248,7 +248,7 @@ const Navigation = (props) => {
                     {/* Profile */}
                     {role == "farmer" ? (
                       <Link
-                        class=" text-decoration-none px-3 py-1 rounded-4 nav_txt nav_txt_hov profile_nav"
+                        class=" text-decoration-none px-2 py-2 rounded-4 nav_txt nav_txt_hov profile_nav"
                         to="/farmerProfile"
                       >
                         <FaUserCircle />

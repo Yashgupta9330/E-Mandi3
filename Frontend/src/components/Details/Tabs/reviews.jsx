@@ -5,9 +5,57 @@ import "../details.css";
 import Rating from "@mui/material/Rating";
 
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
+import Swal from "sweetalert2";
+import BASE_URL from "../../../Server/base_url";
 
 const Reviews = (props) => {
-  const data = props.data;
+   const data = props.data;
+   console.log("reviews ",props)
+  // const {price,image,owner_id,_id,curQuantity,productName} = props;
+
+  {/* const onSubmit = async () => {
+    if (reviewFields.rating > 0 && reviewFields.review.length > 0) {
+      try {
+        const response = await fetch(`${BASE_URL}/api/review/submit`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            rating: reviewFields.rating,
+            review: reviewFields.review,
+            productId: item.productId,
+            orderId: item._id,
+            farmer_id: item.farmer_id,
+            product_name: item.productName,
+            quantity: item.quantity,
+            price: item.price,
+            image: item.image,
+          }),
+        });
+
+        const json = await response.json();
+        if (json.success) {
+          Swal.fire({
+            icon: "success",
+            title: "Review Submitted",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          navigate("/");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      Swal.fire({
+        icon: "warning",
+        title: "Please Enter Review & Rating",
+        text: "",
+      });
+    }
+  }; */}
 
   return (
     <div className="tabContent">

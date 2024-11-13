@@ -2,7 +2,7 @@ import React from "react";
 
 import Navbar from "./components/Navbar/nav.jsx";
 import Navbar2 from "./components/Navbar/nav2.jsx";
-import Footer from "./components/footer.jsx";
+//import Footer from "./components/footer.jsx";
 import Home from "./components/home.jsx";
 import Login from "./components/login.jsx";
 import Signup from "./components/signup";
@@ -15,7 +15,6 @@ import Checkout from "./components/checkout/check.jsx";
 import Detail from "./components/Details/details.jsx";
 import AddReview from "./components/addReview/addReview.jsx";
 import Payment from "./components/payment/payment.jsx";
-
 import "./App.css";
 
 import {
@@ -25,6 +24,8 @@ import {
 } from "react-router-dom";
 import { createContext } from "react";
 import VerifyEmail from "./components/verifyemail.jsx";
+import Better from "./components/Home/Home.jsx";
+import Footer from "./components/Home/Footer.jsx";
 
 const MyContext = createContext();
 
@@ -137,6 +138,14 @@ function App() {
             <>
               <Navbar />
               <AddReview />
+            </>
+          }
+        />
+        <Route
+          path="/home"
+          element={
+            <>
+              <Better />
             </>
           }
         />

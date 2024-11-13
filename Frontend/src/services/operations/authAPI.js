@@ -71,6 +71,7 @@ export function signUp(
             }
             toast.success("Signup Successful")
             dispatch(setToken(response.data.token))
+            localStorage.setItem("role",response.data.role)
             localStorage.setItem("token", response.data.authtoken)
             navigate("/");
         } catch (error) {
@@ -101,6 +102,7 @@ export function login(email, password, navigate) {
 
             toast.success("Login Successful")
             dispatch(setToken(response.data.token))
+            localStorage.setItem("role",response.data.role)
             localStorage.setItem("token", response.data.authtoken)
            // localStorage.setItem("user", JSON.stringify(response.data.user))
             navigate("/")

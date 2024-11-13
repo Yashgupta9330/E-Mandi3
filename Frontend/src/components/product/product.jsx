@@ -12,7 +12,7 @@ function product(props) {
     );
   }
   return (
-    <div className="container">
+    <div className="container my-4">
       <div className="product row">{cards}</div>
     </div>
   );

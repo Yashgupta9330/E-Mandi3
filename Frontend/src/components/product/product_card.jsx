@@ -28,7 +28,7 @@ const Product = (props) => {
   };
 
   return (
-    <div className="productThumb">
+    <div className="w-[200px] h-[300px]">
       {/* {data.tag !== null && data.tag !== undefined && (
         <span className={`badge ${data.tag}`}>{data.tag}</span>
       )} */}
@@ -39,15 +39,16 @@ const Product = (props) => {
             <div className="imgWrapper">
               <div className="p-4 wrapper mb-3">
                 <img
-                  src={data.image + "?im=Resize=(420,420)"}
-                  className="w-100"
+                   width={200}
+                   height={100}
+                  src={data.image}
+                  className="rounded-lg"
                 />
               </div>
             </div>
           </div>
 
           <div className="info">
-            <span className="d-block catName">{data.brand}</span>
             <h4 className="title">
               <Link>{data.name}</Link>
             </h4>
@@ -78,7 +79,7 @@ const Product = (props) => {
                 //   onClick={() => addToCart(productData)}
               >
                 <i class="fa-solid fa-eye"></i>
-                {/* {isAdded === true ? "Added" : "Add"} */}
+               {/*isAdded === true ? "Added" : "Add" */} 
               </Button>
             )}
           </div>

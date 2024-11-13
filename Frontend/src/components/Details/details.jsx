@@ -36,7 +36,7 @@ const DetailsPage = () => {
       }
     };
 
-    // Call fetchData function when component mounts
+   
     fetchData();
   }, [location.state.id]); // Add location.state.id to the dependency array
 
