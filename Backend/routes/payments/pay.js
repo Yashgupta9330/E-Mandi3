@@ -1,6 +1,6 @@
 // server.js
 const Stripe = require('stripe');
-const stripe = Stripe('sk_test_51PSJcmSF49XkwZQg7Xb5De2zHjwehdVQbOSjY9fHbQpLjeRKfZKFzwm3bLDFZeGlPeRGUT3ALVIC8XsY8Yjsmxdf00GODHZReE');
+const stripe = Stripe('');
 const express = require('express');
 const Router = express.Router();
 
