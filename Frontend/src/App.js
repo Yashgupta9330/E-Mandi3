@@ -33,7 +33,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import SuccessPage from "./components/checkout/success.jsx";
 
 const MyContext = createContext();
-const stripePromise = loadStripe("pk_test_51PSJcmSF49XkwZQgcmYSC18cuvNqTCWksKEubird5EXq2GlvSpaB6CCKXhCGsG0xk5uBf3IbBlnyQnOrr49EC9hO00QbVDEov4");
+const stripePromise = loadStripe("");
 
 function App() {
   return (
